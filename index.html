@@ -1,15 +1,68 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Anniversary Waffle</title>
-  <link rel="stylesheet" href="assets/css/style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Quicksand:wght@400;500;600&display=swap" rel="stylesheet">
+  <title>Happy Anniversary</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <meta name="description" content="A colorful journey through our memories." />
 </head>
 <body>
-  <main>
-    <h1>Anniversary Waffle</h1>
-    <p>Welcome to our page 🎉</p>
+<body class="home">
+  <div class="bg-gradient" aria-hidden="true"></div>
+  <!-- Floating hearts decoration -->
+    <div class="floating-hearts" aria-hidden="true">
+        <span></span><span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span><span></span><span></span>
+    </div>
+
+  <header class="container">
+    <h1 class="typewrite" data-text='Happy Anniversary ❤️'>Happy Anniversary ❤️</h1>
+    <p class="sub">Let's take a walk through our colorful memories tonight.</p>
+  </header>
+
+  <main class="container">
+
+      <!-- Spotify player comes first -->
+    <div class="player-wrap">
+        <p class="music-instruction">
+      🎵 Start the music and keep it playing as you go through the memories below. 
+        </p>
+        <p2>(Also scroll till the end)</p2>
+
+    <div class="spotify">
+      <iframe style="border-radius:12px"
+              src="https://open.spotify.com/embed/track/6lfxq3CG4xtTiEg7opyCyx?utm_source=generator"
+              width="80%" height="85" frameborder="0"
+              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+              loading="lazy"></iframe>
+      <a href="https://open.spotify.com/track/6lfxq3CG4xtTiEg7opyCyx"
+         target="_blank"
+         class="note">
+         *Pro Tip: Keep this song playing in Spotify in the background and keep it playing while you read 💛
+      </a>
+    </div>
+
+    </div>
+    <figure class="hero-photo">
+      <img src="assets/img/first_page_img.jpg" alt="Us together" />
+      <figcaption>Remember the day we ate to our hearts full and then walked all along by the lake to make that reel?.</figcaption>
+    </figure>
+      <small class="note">Tip: tap “Play music” above or use the Spotify player.</small>
+    </div>
+
+    <nav class="nav-arrows">
+      <!-- No previous on the first page -->
+      <a class="btn next" href="page-1.html">Next →</a>
+    </nav>
   </main>
+
+  <footer class="container tiny">
+    <p>Made with 💛 for us.</p>
+  </footer>
+
+  <script src="assets/js/script.js"></script>
 </body>
 </html>
+

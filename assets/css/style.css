@@ -1,10 +1,782 @@
-body {
-  font-family: system-ui, sans-serif;
-  background: #fafafa;
-  color: #222;
-  margin: 2rem;
+:root{
+  --bg1:#976068;
+  --bg2:#fcb69f;
+  --accent:#520808;
+  --accent2:#200e54;
+  --ink:#1f1f1f;
+  --ink-soft:#444;
+  --card:#ffffffcc;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color:var(--ink); line-height:1.5; overflow-x:hidden;
+}
+
+/* Base background layer */
+.bg-gradient{
+  position: fixed;
+  inset: 0;
+  z-index: -2;    /* behind hearts and content */
+}
+
+.container{
+  width:min(920px, 92vw);
+  margin-inline:auto;
+  padding: 1.5rem;
+}
+
+header.container{ text-align:center; padding-top:2rem }
+h1{
+  font-size: clamp(2.2rem, 6vw, 4rem);
+  margin:0 0 .25rem;
+  background: linear-gradient(30deg, var(--accent), var(--accent2));
+  -webkit-background-clip:text; background-clip:text; color:solid;
+  letter-spacing:.5px;
+}
+.sub{ color: #4b4889;; margin-top:.25rem }
+
+/* Typewriter caret */
+.typewrite{
+  position: relative;
+  white-space: nowrap;
+}
+.typewrite::after{
+  content:"";
+  display:inline-block;
+  width:2px; height:1.1em; background:currentColor; margin-left:4px;
+  animation: blink .9s steps(1) infinite;
+  vertical-align: -3px;
+}
+@keyframes blink{50%{opacity:0}}
+
+.hero-photo{
+  margin: 2rem auto; text-align:center;
+  background: var(--card);
+  border-radius: 16px; padding: 1rem 1rem 0.5rem;
+  box-shadow: 0 10px 30px #00000014;
+  width:min(720px, 100%);
+}
+.hero-photo img{
+  width:100%; height:auto; display:block; border-radius: 12px;
+}
+.hero-photo figcaption{
+  font-size:.9rem; color:#555; margin:.6rem 0 .8rem;
+}
+
+.player-wrap{
+  margin: 1rem auto 1rem; text-align:center;
+  color: #7d7ab8;
+  width:min(720px, 80%);
+}
+.btn{
+  appearance:none; border:none; cursor:pointer;
+  padding:.8rem 1.2rem; border-radius:999px; font-weight:600;
+  box-shadow: 0 8px 24px #0000001a;
+  transition: transform .12s ease, box-shadow .12s ease, opacity .2s;
+}
+.btn.primary{
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  color:#fff;
+}
+.btn:hover{ transform: translateY(-1px); box-shadow:0 10px 28px #00000022 }
+.btn:active{ transform: translateY(0) scale(.99) }
+
+.spotify{ margin-top:1rem }
+
+.note{ display:block; margin-top:.5rem; color:#666 }
+
+.nav-arrows{
+  margin-top: 1.8rem; display:flex; justify-content:flex-end; gap:.75rem;
+}
+.btn.next{
+  background:#fff; border:1px solid #e9e9e9; color:#222;
+}
+
+footer.container{ text-align:center; color:#666; padding-bottom:10rem }
+.tiny{ font-size:.9rem }
+
+/* ====== Hero photo size & style ====== */
+.hero-photo {
+  max-width: 520px;            /* overall block width */
+  margin: 1.25rem auto 2rem;
   text-align: center;
 }
+.hero-photo img {
+  width: 85%;                  /* image takes most of the figure width */
+  max-width: 420px;            /* hard cap */
+  display: block;
+  margin: 0 auto 0.5rem;
+  border-radius: 18px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+  transform: translateY(0) scale(1);
+  transition: transform 300ms ease, box-shadow 300ms ease;
+}
+.hero-photo img:hover {
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 16px 36px rgba(0,0,0,0.28);
+}
+
+/* ====== Caption animation & look ====== */
+.hero-photo figcaption {
+  font-size: 0.95rem;
+  color: #ffe8f2;
+  letter-spacing: 0.4px;
+  text-shadow: 0 1px 0 rgba(0,0,0,0.25);
+  opacity: 0;
+  transform: translateY(8px);
+  animation: captionIn 800ms ease forwards 300ms;
+  position: relative;
+}
+.hero-photo figcaption::after {
+  content: " ✨";
+  animation: twinkle 2.2s ease-in-out infinite 900ms;
+}
+
+@keyframes captionIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes twinkle {
+  0%, 100% { filter: drop-shadow(0 0 0 rgba(255,255,255,0)); }
+  50%      { filter: drop-shadow(0 0 6px rgba(255,255,255,0.9)); }
+}
+
+/* ====== Floating hearts ====== */
+.floating-hearts {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1; /* behind content, above gradient */
+  overflow: hidden;
+}
+
+.floating-hearts span {
+  position: absolute;
+  bottom: -10vh;
+  width: 14px;
+  height: 14px;
+  background: radial-gradient(circle at 30% 30%, #ff9bd1 0%, #ff5ca8 60%, #ff2f92 100%);
+  transform: rotate(45deg);
+  opacity: 0.75;
+  animation: floatUp linear infinite;
+  border-radius: 2px;
+  filter: drop-shadow(0 2px 6px rgba(255, 92, 168, 0.35));
+}
+
+/* make heart shape using pseudo-elements */
+.floating-hearts span::before,
+.floating-hearts span::after {
+  content: "";
+  position: absolute;
+  width: 14px; height: 14px;
+  background: inherit;
+  border-radius: 50%;
+}
+.floating-hearts span::before { left: -7px; top: 0; }
+.floating-hearts span::after  { top: -7px; left: 0; }
+
+@keyframes floatUp {
+  0%   { transform: translateY(0)   rotate(45deg)    scale(0.8); opacity: 0; }
+  10%  { opacity: 0.85; }
+  100% { transform: translateY(-120vh) rotate(45deg) scale(1);   opacity: 0; }
+}
+
+/* Position, size, duration, and delay variations */
+.floating-hearts span:nth-child(1)  { left: 5%;  animation-duration: 12s; animation-delay: 0.2s; }
+.floating-hearts span:nth-child(2)  { left: 12%; animation-duration: 14s; animation-delay: 1.2s; transform: scale(0.9) rotate(45deg); }
+.floating-hearts span:nth-child(3)  { left: 20%; animation-duration: 11s; animation-delay: 0.6s; }
+.floating-hearts span:nth-child(4)  { left: 28%; animation-duration: 16s; animation-delay: 2.0s; transform: scale(1.1) rotate(45deg); }
+.floating-hearts span:nth-child(5)  { left: 35%; animation-duration: 13s; animation-delay: 0.9s; }
+.floating-hearts span:nth-child(6)  { left: 43%; animation-duration: 15s; animation-delay: 1.8s; transform: scale(0.85) rotate(45deg); }
+.floating-hearts span:nth-child(7)  { left: 52%; animation-duration: 12.5s; animation-delay: 0.4s; }
+.floating-hearts span:nth-child(8)  { left: 60%; animation-duration: 17s; animation-delay: 1.6s; transform: scale(1.15) rotate(45deg); }
+.floating-hearts span:nth-child(9)  { left: 68%; animation-duration: 13.5s; animation-delay: 0.8s; }
+.floating-hearts span:nth-child(10) { left: 76%; animation-duration: 15.5s; animation-delay: 1.4s; transform: scale(0.95) rotate(45deg); }
+.floating-hearts span:nth-child(11) { left: 84%; animation-duration: 14.5s; animation-delay: 0.5s; }
+.floating-hearts span:nth-child(12) { left: 92%; animation-duration: 18s; animation-delay: 1.9s; transform: scale(1.2) rotate(45deg); }
+
+
+
+/* Header text – pastel gradient fill */
 h1 {
-  color: #e85d04;
+  background: linear-gradient(90deg, #f4978e, #a593e0); 
+  -webkit-background-clip: text;
+  color: transparent;
+  font-weight: 700;
+}
+
+/* Subheading tone */
+.sub {
+    color: #7d7ab8;
+}
+
+/* Image frame and shadow softening */
+.hero-photo img {
+  border-radius: 18px;
+  box-shadow: 0 10px 24px rgba(255, 182, 193, 0.3);
+}
+
+/* Softer pastel caption */
+.hero-photo figcaption {
+  font-size: 1rem;
+  color: #7d7ab8;
+  text-shadow: 0 1px 2px rgba(255,255,255,0.5);
+  letter-spacing: 0.5px;
+  opacity: 0;
+  animation: captionIn 1.2s ease forwards 0.4s;
+  background: rgba(255,255,255,0.2);
+  border-radius: 12px;
+  padding: 0.4rem 0.8rem;
+  display: inline-block;
+}
+
+/* Floating hearts pastel adjustment */
+.floating-hearts span {
+  background: radial-gradient(circle at 30% 30%, #ffd6e0 0%, #f4978e 70%, #f9bccd 100%);
+  opacity: 0.65;
+  filter: drop-shadow(0 2px 5px rgba(255, 150, 180, 0.4));
+}
+
+/* General buttons + text */
+.btn.primary {
+  background: linear-gradient(90deg, #f4978e, #a593e0);
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 4px 18px rgba(164, 147, 224, 0.25);
+}
+.btn.next {
+  background: rgba(255,255,255,0.9);
+  color: #33334d;
+  border: 1px solid rgba(200,200,255,0.4);
+}
+
+
+/* ====== Font styling for soft romantic aesthetic ====== */
+body {
+  font-family: 'Quicksand', sans-serif;
+  color: var(--ink);
+  line-height: 1.7;
+  font-weight: 400;
+}
+
+h1, h2, h3 {
+  font-family: 'Playfair Display', sans-serif;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.sub {
+  font-family: 'Quicksand', sans-serif;
+  font-size: 1rem;
+  color: var(--ink-soft);
+  opacity: 0.9;
+}
+
+figcaption {
+  font-family: 'Quicksand', serif;
+  font-weight: 500;
+}
+
+/* ===== First page (home) — pink pastel theme & layout nudge ===== */
+/* ===== Static background for first page ===== */
+.home .bg-gradient {
+  background: #ead7ffc3;      /* ← pick your color */
+  animation: none;          /* stop gradient animation */
+  filter: brightness(1.05);
+}
+
+/* Stronger, brighter heading contrast on pink */
+.home h1 {
+  background: linear-gradient(90deg, #ff6aa2, #a15cff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.45);
+}
+
+/* Increase overall text contrast on pink */
+.home body,
+.home .sub,
+.home .note,
+.home p,
+.home small {
+  color: #22223b;  /* deep indigo-gray for readability */
+}
+
+/* Bring content slightly upward */
+.home header.container { padding-top: 1.25rem; }
+.home .player-wrap { 
+  margin: 0.25rem auto 1.25rem;   /* was larger; pull up */
+}
+.home .hero-photo {
+  margin: 0.75rem auto 1.25rem;   /* tighter to lift the image */
+  max-width: 540px;               /* slight bump for visual balance */
+}
+.home .hero-photo img {
+  width: 88%;
+  max-width: 440px;
+  transform: translateY(-4px);    /* tiny lift */
+}
+
+/* Caption: more visible on pink */
+.home .hero-photo figcaption {
+  color: #2b224a;                 /* dark plum for crisp contrast */
+  background: rgba(255,255,255,0.35);
+  text-shadow: 0 1px 0 rgba(255,255,255,0.6);
+  border-radius: 12px;
+  padding: 0.45rem 0.8rem;
+  letter-spacing: 0.45px;
+  opacity: 0;
+  animation: captionIn 900ms ease forwards 300ms;
+}
+
+/* Spotify + nav button styling to match */
+.home .spotify iframe {
+  box-shadow: 0 10px 26px rgba(255, 105, 154, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+}
+.home .btn.next {
+  background: rgba(255,255,255,0.95);
+  color: #1f1f2e;
+  border: 1px solid rgba(210, 180, 230, 0.6);
+  box-shadow: 0 8px 22px rgba(161, 92, 255, 0.18);
+}
+
+/* Hearts: soften to pink spectrum for this page */
+.home .floating-hearts span {
+  background: radial-gradient(circle at 30% 30%, #ffd6e0 0%, #ff9bbd 70%, #ff77a9 100%);
+  filter: drop-shadow(0 2px 6px rgba(255, 120, 170, 0.35));
+  opacity: 0.7;
+}
+
+/* ===== Stronger upward shift for first page layout ===== */
+.home main.container {
+  margin-top: -40px;   /* lift whole main section upward */
+}
+
+.home .player-wrap {
+  margin-top: -20px;   /* pull Spotify player closer to header */
+  margin-bottom: 0.5rem;
+}
+
+.home .hero-photo {
+  margin-top: -10px;   /* lift image */
+  margin-bottom: 0.5rem;
+}
+
+/* ===== Footer & tip spacing adjustments for first page ===== */
+
+/* Pull footer upward slightly */
+.home footer.container {
+  margin-top: -10px;         /* lift footer */
+  padding-bottom: 1rem;      /* tighter bottom space */
+  opacity: 0.9;
+}
+
+/* Push the small tip note downward for breathing room */
+.home .note:last-of-type {
+  display: block;
+  margin-top: 1.8rem;        /* more gap below the image */
+  margin-bottom: 0.8rem;     /* extra gap above footer */
+  color: #343a40;
+  font-size: 0.9rem;
+  opacity: 0.85;
+  text-align: center;
+}
+
+
+
+
+/* Starting Page 1
+
+/* ===== Story page background (keeps your soft animated pastel) ===== */
+.story .bg-gradient {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background: linear-gradient(120deg, #2b3b7e, #50227d, #276b8f, #6d206c);
+  background-size: 320% 320%;
+  animation: gradientShift 22s ease infinite;
+}
+
+/* ===== 2-column layout ===== */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1.05fr;
+  gap: clamp(1rem, 4vw, 2rem);
+  align-items: center;
+  margin: 1rem 0 1.25rem;
+}
+
+/* ===== Photo block (left) ===== */
+.story-photo {
+  margin: 0;
+  background: var(--card);
+  border-radius: 16px;
+  padding: 1rem 1rem 0.6rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  text-align: center;
+}
+.story-photo img {
+  width: 100%;
+  max-width: 520px;
+  height: auto;
+  display: block;
+  border-radius: 14px;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+}
+.story-photo figcaption {
+  font-family: 'Quicksand', serif;
+  font-size: 0.95rem;
+  color: #7d7ab8; /* pastel lavender */
+  margin-top: 0.6rem;
+  letter-spacing: 0.3px;
+}
+
+/* ===== Text card (right) ===== */
+.story-card {
+  background: var(--card);
+  border-radius: 16px;
+  padding: clamp(1rem, 3.2vw, 1.5rem);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.10);
+  backdrop-filter: blur(2px);
+}
+.story-card .caption {
+  font-family: 'Playfair Display', serif;
+  font-weight: 600;
+  margin: 0 0 0.35rem;
+  letter-spacing: 0.4px;
+  color: #440a95; /* distinct caption color */
+}
+.story-card p {
+  font-family: 'Quicksand', sans-serif;
+  margin: 0.25rem 0 0;
+  color: var(--ink);
+  line-height: 1.8;
+}
+
+/* ===== Bottom arrows spaced left/right ===== */
+.nav-arrows.between {
+  justify-content: space-between;
+}
+.btn.prev {
+  background: rgba(255,255,255,0.95);
+  border: 1px solid rgba(220,220,235,0.7);
+  color: #1f1f2e;
+}
+
+/* ===== Responsive stacking ===== */
+@media (max-width: 860px) {
+  .two-col { grid-template-columns: 1fr; }
+  .story-photo img { max-width: 100%; }
+  .nav-arrows.between { gap: 0.75rem; }
+}
+
+
+/* Subcaption under the heading */
+.page-1 .sub {
+  color: #ffffff !important;
+  opacity: 1 !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+}
+
+/* Footer text */
+.page-1 footer.container,
+.page-1 footer.container p,
+.page-1 footer.container .tiny {
+  color: #ffffff !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+}
+
+/* ===== Page 2 custom styles ===== */
+
+.page-2 .bg-gradient {
+  background: #f7ffdb;       /* ← your page color (soft pastel blue) */
+  background-image: none !important;
+  animation: none !important;
+}
+
+/* If page 2 background is dark, adjust colors */
+.page-2 .sub,
+.page-2 footer.container,
+.page-2 footer.container p {
+  color: #0c0a0a !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+}
+
+/* Mirrored layout (text left, photo right) */
+.two-col.reverse {
+  grid-template-columns: 1.05fr 1fr;
+}
+
+/* Fonts for Page 2 */
+.page-2 h1 {
+  font-family: 'Playfair Display', serif;
+}
+
+.page-2 .story-card .caption {
+  font-family: 'Playfair Display', serif
+  font-size: 1.6rem;
+  color: #8f4f62;
+}
+
+.page-2 .story-card p {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+  line-height: 1.8;
+}
+
+/* ===== Page 3 — custom color theme ===== */
+.page-3 .bg-gradient {
+  background: #651414; /* pastel blue (change if you want another color) */
+  background-image: none !important;
+  animation: none !important;
+}
+
+/* White subcaption & footer for visibility */
+.page-3 .sub,
+.page-3 footer.container,
+.page-3 footer.container p {
+  color: #ffffff !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+}
+
+/* Story card styling */
+.page-3 .story-card {
+  background: rgba(255,255,255,0.85);
+  border-radius: 16px;
+  box-shadow: 0 10px 26px rgba(0,0,0,0.15);
+}
+
+/* Caption styling */
+.page-3 .story-card .caption {
+  font-family: 'Playfair Display', serif
+  font-size: 1.6rem;
+  color: #4b3f72;
+}
+
+/* Paragraph text */
+.page-3 .story-card p {
+  font-family: 'Poppins', sans-serif;
+  color: #1a1a1a;
+  line-height: 1.8;
+}
+.page-3 h1 {
+  font-size: 3.6rem;     /* adjust as needed */
+}
+
+
+/* ===== Page 4 — custom color theme ===== */
+.page-4 .bg-gradient {
+  background: #f6dbdb;              /* soft peachy pastel */
+  background-image: none !important;
+  animation: none !important;
+}
+
+/* If you want the header subtitle + footer to stand out more on this color: */
+.page-4 .sub,
+.page-4 footer.container,
+.page-4 footer.container p {
+  color: #3b2b2b;
+  text-shadow: 0 1px 2px rgba(255,255,255,0.4);
+}
+
+/* Story card styling for page 4 */
+.page-4 .story-card {
+  background: rgba(255,255,255,0.9);
+  border-radius: 16px;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+}
+
+/* Caption styling */
+.page-4 .story-card .caption {
+  font-family: 'Playfair Display', serif
+  font-size: 1.6rem;
+  color: #772641; /* warm rosy accent */
+}
+
+/* Paragraph text */
+.page-4 .story-card p {
+  font-family: 'Poppins', sans-serif;
+  color: #2a2626;
+  line-height: 1.8;
+}
+
+.page-4 h1 {
+  font-size: 3.6rem;     /* adjust as needed */
+}
+
+
+/* ===== Page 5 — custom theme ===== */
+.page-5 .bg-gradient {
+  background: #d1f9eff1; /* soft vintage beige */
+  background-image: none !important;
+  animation: none !important;
+}
+
+/* Make subtitle + footer readable */
+.page-5 .sub,
+.page-5 footer.container,
+.page-5 footer.container p {
+  color: #080c0b;
+  text-shadow: 0 1px 2px rgba(255,255,255,0.3);
+}
+
+/* Card styling */
+.page-5 .story-card {
+  background: rgba(255,255,255,0.9);
+  border-radius: 16px;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+}
+
+/* Caption font */
+.page-5 .story-card .caption {
+  font-family: 'Playfair Display', serif
+  font-size: 1.6rem;
+  color: #a86982; /* warm rose */
+}
+
+/* Paragraph text */
+.page-5 .story-card p {
+  font-family: 'Poppins', sans-serif;
+  color: #2a2626;
+  line-height: 1.8;
+}
+
+
+/* ===== Page 6 — final page theme ===== */
+.page-6 .bg-gradient {
+  background: radial-gradient(circle at top, #ffd6f2 0%, #2b2340 32%, #181324 100%);
+  background-image: radial-gradient(circle at top, #ffd6f2 0%, #2b2340 32%, #181324 100%);
+  animation: none !important;
+}
+
+/* Header styling */
+.page-6 .final-header {
+  text-align: center;
+  padding-top: 2rem;
+  padding-bottom: 0.5rem;
+}
+.page-6 h1 {
+  font-size: clamp(2.2rem, 5vw, 3.4rem);
+  color: #ffeaf8;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.5);
+  -webkit-background-clip: border-box; /* override gradient text behavior */
+  background: none;
+}
+.page-6 .sub {
+  color: #f6edf9;
+  opacity: 0.9;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+
+/* Layout wrapper */
+.final-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.75rem;
+  padding-bottom: 1.5rem;
+}
+
+/* Polaroid-style photo card */
+.final-photo-card {
+  margin: 0;
+  background: #fdfaf5;
+  border-radius: 18px;
+  padding: 0.75rem 0.75rem 1.1rem;
+  box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+  max-width: 420px;
+  transform: rotate(-1.3deg);
+  transition: transform 220ms ease, box-shadow 220ms ease;
+}
+.final-photo-card img {
+  display: block;
+  width: 100%;
+  border-radius: 12px;
+  margin-bottom: 0.6rem;
+}
+.final-photo-card figcaption {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.95rem;
+  text-align: center;
+  color: #5e4a5f;
+}
+.final-photo-card:hover {
+  transform: rotate(-0.4deg) translateY(-4px);
+  box-shadow: 0 22px 46px rgba(0,0,0,0.45);
+}
+
+/* Final text card */
+.final-text-card {
+  max-width: 640px;
+  width: 100%;
+  background: rgba(22, 16, 37, 0.88);
+  border-radius: 18px;
+  padding: clamp(1.2rem, 3vw, 1.7rem);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+  border: 1px solid rgba(255, 214, 248, 0.35);
+  color: #f8f0ff;
+  backdrop-filter: blur(4px);
+}
+.final-text-card p {
+  font-family: 'Poppins', sans-serif;
+  margin: 0.4rem 0;
+  line-height: 1.9;
+}
+.final-text-card p1 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.8rem;
+  margin: 0.4rem 0;
+  line-height: 1.9;
+}
+
+.final-caption {
+  font-family: 'Great Vibes', cursive;
+  font-size: 1.8rem;
+  margin: 0 0 0.3rem;
+  color: #ffd6f8;
+}
+.final-signoff {
+  margin-top: 1.3rem;
+  font-style: italic;
+  
+}
+.final-signoff span {
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Navigation on final page */
+.final-nav {
+  margin-top: 1.4rem;
+}
+.page-6 .btn.prev {
+  background: rgba(255,255,255,0.9);
+  color: #2b2340;
+}
+.page-6 .btn.next {
+  background: linear-gradient(90deg, #ff9ecd, #a77dff);
+  color: #fff;
+  border: none;
+}
+
+/* Footer */
+.final-footer {
+  text-align: center;
+  color: #f7e9ff;
+  opacity: 0.9;
+  padding-bottom: 2rem;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .final-photo-card {
+    max-width: 340px;
+  }
+  .final-text-card {
+    border-radius: 16px;
+  }
 }
